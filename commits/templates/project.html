@@ -5,26 +5,20 @@
 <div id="column-main">
     <h2 class="caption">Projects overview</h2>
     <div class="part">
-        <dl class="list">
-            <dt class="header">Name</dt>
-            <dd class="header">Contributors</dd>
-            {% for project in projects  %}
-            <dt><a href="project/{{project.id}}/">{{project.name}}</a></dt>
-                <dd>{{project.author_count}}</dd>
-            {% endfor %}
-        </dl>
-    </div>
+        <h3>{{ project.name }}</h3>
+        <p>{{ project.desc }} </p>
+   </div>
     <h2 class="caption">Recent commits</h2>
     <div class="part">
          <dl class="list">
             {% for commit in commits  %}
             <dt>{{ commit.author__account }}</dt>
-            <dd>[{{commit.repository__name}}][{{commit.time|date:"Y-m-d"}}] {{commit.comment|truncatewords:16}}</dd>
+            <dd>[{{commit.time|date:"Y-m-d"}}] {{commit.comment|truncatewords:16}}</dd>
             {% endfor %}
     </div>
 </div>
 <div id="column-right">
-   <h2 class="caption">Coders of the Month</h2>
+   <h2 class="caption">Participants</h2>
     <div class="part">
         <dl class="list">
             {% for coder in coders  %}

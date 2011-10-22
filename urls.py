@@ -7,6 +7,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'commits.views.home', name='home'),
+    url(r'^project/(?P<project_id>\d+)/$', 'commits.views.project', name='project'),
     # url(r'^bigteam/', include('bigteam.foo.urls')),
     # url(r'^$', 'commits.views.home', name='home'),
     # Uncomment the admin/doc line below to enable admin documentation:
