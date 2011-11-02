@@ -47,6 +47,7 @@ def project(request, project_id):
 
     coders = Author.objects.filter(commits__repository=project)
     coders = coders.annotate(author_commits=Count('commits'))
+    coders = coders.order_by('-author_commits')
     
     return render_to_response('project.html',
             {

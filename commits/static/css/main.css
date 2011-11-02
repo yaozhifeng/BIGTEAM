@@ -80,9 +80,7 @@ h2.caption {
 }
 div.part {
     border: 1px solid #DDDDDD;
-    padding-left: 5px;
-    padding-right: 5px;
-    padding-bottom: 5px;
+    padding: 10px;
     margin-bottom: 15px;
 }
 #footer {
@@ -109,27 +107,9 @@ div.part {
     margin:0 auto;
     text-shadow:1px 1px 5px #666666;
 }
-dl.list {
-    clear: both;
-    overflow: hidden;
-}
-dl.list dt {
-    clear: both;
-    float: left;
-    width: 20%;
-    margin: 0 0 4px;
-    padding: 4px;
-}
-dl.list dd {
-    float: left;
-    width: 70%;
-    margin: 0 0 4px;
-    padding: 4px;
-}
-dd.header, dt.header {
+thead tr {
     font-weight: bold;
-    border-bottom: 1px dashed #DDDDDD;
-    margin: 0 0 4px;
+    border-bottom: 1px solid #DDDDDD;
 }
 
 div.bar {
