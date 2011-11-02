@@ -10,24 +10,45 @@
    </div>
     <h2 class="caption">Recent commits</h2>
     <div class="part">
-         <dl class="list">
-            {% for commit in commits  %}
-            <dt>{{ commit.author__account }}</dt>
-            <dd>[{{commit.time|date:"Y-m-d"}}] {{commit.comment|truncatewords:16}}</dd>
-            {% endfor %}
+         <table class="stats">
+            <thead>
+                <tr>
+                    <th>Coder</th>
+                   <th>Time</th>
+                    <th>Commits</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for commit in commits  %}
+                    <tr>
+                        <td>{% firstof commit.author__display commit.author__account %}</td>
+                       <td>{{commit.time|date:"Y-m-d"}}</td>
+                        <td>{{commit.comment|truncatewords:16}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 <div id="column-right">
    <h2 class="caption">Participants</h2>
     <div class="part">
-        <dl class="list">
-            {% for coder in coders  %}
-                <dt>{% firstof coder.display coder.account %}</dt>
-                <dd>
-                   <span>{{coder.author_commits|intcomma}}</span>
-                </dd>
-            {% endfor %}
-        </dl>
-    </div>
+         <table class="stats">
+            <thead>
+                <tr>
+                    <th>Coder</th>
+                    <th>Commits</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for coder in coders  %}
+                    <tr>
+                        <td>{% firstof coder.display coder.account %}</td>
+                        <td>{{coder.author_commits|intcomma}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+   </div>
 </div>
 {% endblock %}

@@ -17,7 +17,7 @@ def home(request):
     #coders = coders.values('commits__time')
     coders = coders.filter(commits__time__range=(lastmonth_day, today))
     coders = coders.annotate(author_commits=Count('commits'))
-    coders = coders.order_by('-author_commits')
+    coders = coders.order_by('-author_commits')[0:10]
 
     commits = CommitLog.objects.values(
             'revision',
@@ -45,9 +45,8 @@ def project(request, project_id):
             'author__account',
             'author__display').order_by('-time')[:10]
 
-    coders = CommitLog.objects.values(
-            'author__account',
-            'author__display').filter(repository=project)
+    coders = Author.objects.filter(commits__repository=project)
+    coders = coders.annotate(author_commits=Count('commits'))
     
     return render_to_response('project.html',
             {
