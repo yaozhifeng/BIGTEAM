@@ -73,8 +73,8 @@ def person(request, person_id):
     coder['commits'] = CommitLog.objects.filter(author__id=person_id).count()
     coder['recent_commits'] = 0
 
-    projects = Repository.objects.filter(commits__author=author).values('name').distinct()
-    #projects.annotate(commits_count=Count('commits'))
+    projects = Repository.objects.values('name').filter(commits__author=author).annotate(commits_count=Count('commits'))
+
     return render_to_response('person.html',
             {
                 'coder': coder,
