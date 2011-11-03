@@ -61,7 +61,7 @@
             <tbody>
                 {% for coder in coders  %}
                     <tr>
-                        <td>{% firstof coder.display coder.account %}</td>
+                        <td><a href="/person/{{coder.id}}/">{% firstof coder.display coder.account %}</a></td>
                         <td>{{coder.author_commits|intcomma}}</td>
                     </tr>
                 {% endfor %}

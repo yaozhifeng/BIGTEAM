@@ -57,3 +57,31 @@ def project(request, project_id):
             },
             context_instance = RequestContext(request)
         )
+
+def person(request, person_id):
+    #import pdb;
+    #pdb.set_trace();
+    author = get_object_or_404(Author, pk=person_id)
+    
+    commits = CommitLog.objects.filter(author=author)
+    commits = commits.values('repository__name', 'time', 'comment')
+    commits = commits.order_by('-time')[0:10]
+
+    coder = {}
+    coder['account'] = author.account
+    coder['display'] = author.display
+    coder['commits'] = CommitLog.objects.filter(author__id=person_id).count()
+    coder['recent_commits'] = 0
+
+    projects = Repository.objects.filter(commits__author=author).values('name').distinct()
+    #projects.annotate(commits_count=Count('commits'))
+    return render_to_response('person.html',
+            {
+                'coder': coder,
+                'commits': commits,
+                'projects': projects,
+            },
+            context_instance = RequestContext(request)
+        )
+
+
