@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block content %}
+<div id="column-main">
+    <h2 class="caption">Personal overview</h2>
+    <div class="part">
+        <p>Name: {{ coder.display }} </p>
+        <p>Account: {{ coder.account}} </p>
+        <p>Total commits: {{ coder.commits }} </p>
+        <p>Recent commits: {{ coder.recent_commits }} </p>
+   </div>
+    <h2 class="caption">Recent commits</h2>
+    <div class="part">
+         <table class="stats">
+            <thead>
+                <tr>
+                    <th>Project</th>
+                   <th>Time</th>
+                    <th>Commits</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for commit in commits  %}
+                    <tr>
+                        <td>{{ commit.repository__name  }}</td>
+                       <td>{{ commit.time|date:"Y-m-d" }}</td>
+                        <td>{{ commit.comment|truncatewords:16 }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div id="column-right">
+   <h2 class="caption">Related projects</h2>
+    <div class="part">
+         <table class="stats">
+            <thead>
+                <tr>
+                    <th>Project</th>
+                    <th>Commits</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for project in projects  %}
+                    <tr>
+                        <td>{{ project.name }}</td>
+                        <td>{{ project.commits_count|intcomma }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+   </div>
+</div>
+{% endblock %}
