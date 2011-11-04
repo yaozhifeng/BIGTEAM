@@ -26,6 +26,9 @@ class Repository(models.Model):
     def __unicode__(self):
         return self.name
 
+    def clear(self):
+        CommitLog.objects.filter(repository=self).delete()
+
     def update(self):
         svnclient = SVNLogClient(self.url, username=self.username, password=self.password)
         try:

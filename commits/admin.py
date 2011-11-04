@@ -3,11 +3,15 @@ from django.contrib import admin
 
 class RepositoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'desc', 'url']
-    actions = ['update']
+    actions = ['update', 'clear']
 
     def update(self, request, queryset):
         for rep in queryset:
             rep.update()
+
+    def clear(self, request, queryset):
+        for rep in queryset:
+            rep.clear()
 
 class AuthorAdmin(admin.ModelAdmin):
     list_display = ['account', 'display']
