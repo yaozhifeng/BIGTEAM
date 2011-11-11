@@ -96,3 +96,5 @@ class CommitLog(models.Model):
 
     def __unicode__(self):
         return 'r%d' % self.revision
+
+

@@ -7,18 +7,20 @@ import datetime
 from models import *
 
 def home(request):
+    #project list
     projects = Repository.objects.values('id', 'name', 'desc')
     projects = projects.annotate(author_count=Count('commits__author', distinct=True))
 
     today = datetime.date.today()
-    lastmonth_day = today - datetime.timedelta(days=60)
+    lastmonth_day = today - datetime.timedelta(days=30)
 
+    #coder of the month
     coders = Author.objects.all()
-    #coders = coders.values('commits__time')
     coders = coders.filter(commits__time__range=(lastmonth_day, today))
     coders = coders.annotate(author_commits=Count('commits'))
     coders = coders.order_by('-author_commits')[0:10]
 
+    #recent commits
     commits = CommitLog.objects.values(
             'revision',
             'comment', 
@@ -27,11 +29,17 @@ def home(request):
             'author__account', 
             'author__display').order_by('-time')[:10]
 
+    #data for generating the graph
+    select_data = {"date": """strftime('%%Y-%%m-%%d', time)"""}
+    graph = CommitLog.objects.filter(time__range=(lastmonth_day, today))
+    graph = graph.extra(select=select_data).values('date').annotate(commit_count=Count('id'))
+
     return render_to_response('home.html',
                 {
                     'projects': projects,
                     'coders': coders,
                     'commits': commits,
+                    'graph': graph,
                 },
                 context_instance = RequestContext(request)
             )
@@ -54,6 +62,7 @@ def project(request, project_id):
                 'project': project,
                 'commits': commits,
                 'coders': coders,
+                'commits_graph': commits_graph,
             },
             context_instance = RequestContext(request)
         )

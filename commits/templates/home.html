@@ -3,6 +3,7 @@
 
 {% block content %}
 <div id="column-main">
+    <div class="graph" id="graph"></div>
     <h2 class="caption">Projects overview</h2>
     <div class="part">
         <table class="stats">
@@ -69,4 +70,17 @@
         </table>
    </div>
 </div>
+<script language="javascript">
+    $.jqplot('graph',  [[
+    {% for line in graph %}
+    ['{{line.date}}', {{line.commit_count}}],
+    {% endfor %}
+    ]],
+    {
+        title: 'commit history',
+        axes:{xaxis:{renderer:$.jqplot.DateAxisRenderer}},
+        tickOptions:{formatString:'%b %#d, %y'},
+        tickInterval:'1 day'    
+    });    
+</script>
 {% endblock %}
