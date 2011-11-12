@@ -71,16 +71,25 @@
    </div>
 </div>
 <script language="javascript">
-    $.jqplot('graph',  [[
-    {% for line in graph %}
-    ['{{line.date}}', {{line.commit_count}}],
+    $.jqplot('graph',  [
+    {% for project, line in graph.items %}
+    {{line|safe}},
     {% endfor %}
-    ]],
+    ],
     {
-        title: 'commit history',
-        axes:{xaxis:{renderer:$.jqplot.DateAxisRenderer}},
-        tickOptions:{formatString:'%b %#d, %y'},
-        tickInterval:'1 day'    
-    });    
+        title: 'Monthly Commit Graph',
+        axes:{xaxis:{renderer:$.jqplot.DateAxisRenderer}, yaxis:{min:0, tickInterval:5}},
+        tickOptions:{formatString:'%b&nbsp;%#d'},
+        //tickInterval:'1 day',
+        series: [
+        {% for project, line in graph.items %}
+            {label: "{{project|safe}}"},
+        {% endfor %}
+        ],
+        legend: {show:true, localtion:"ne"},
+        highlighter: {
+            show: true,
+        },
+   });    
 </script>
 {% endblock %}

@@ -34,12 +34,27 @@ def home(request):
     graph = CommitLog.objects.filter(time__range=(lastmonth_day, today))
     graph = graph.extra(select=select_data).values('date').annotate(commit_count=Count('id'))
 
+    stats = {}
+    #generate commit graph for each project
+    for project in projects:
+        #stats[project['name']] = graph
+        g = graph.filter(repository=project['id'])
+        line = '['
+        for day in g:
+            line = line + '["%s", %d],' % (day['date'], day['commit_count'])
+        line = line + ']'
+ 
+        stats[project['name']] = line
+
+    #import pdb
+    #pdb.set_trace()
+
     return render_to_response('home.html',
                 {
                     'projects': projects,
                     'coders': coders,
                     'commits': commits,
-                    'graph': graph,
+                    'graph': stats,
                 },
                 context_instance = RequestContext(request)
             )
@@ -62,7 +77,6 @@ def project(request, project_id):
                 'project': project,
                 'commits': commits,
                 'coders': coders,
-                'commits_graph': commits_graph,
             },
             context_instance = RequestContext(request)
         )
