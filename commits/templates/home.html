@@ -17,7 +17,7 @@
             <tbody>
                 {% for project in projects  %}
                     <tr>
-                        <td><a href="project/{{project.id}}/">{{project.name}}</a></td>
+                        <td><a href="/project/{{project.id}}/">{{project.name}}</a></td>
                         <td>{{project.author_count}}</td>
                         <td>&nbsp;</td>
                     <tr>
@@ -39,8 +39,8 @@
             <tbody>
                 {% for commit in commits  %}
                     <tr>
-                        <td>{% firstof commit.author__display commit.author__account %}</td>
-                        <td>{{commit.repository__name}}</td>
+                        <td><a href="/person/{{commit.author__id}}/">{% firstof commit.author__display commit.author__account %}</a></td>
+                        <td><a href="/project/{{commit.repository__id}}/">{{commit.repository__name}}</a></td>
                         <td>{{commit.time|date:"Y-m-d"}}</td>
                         <td>{{commit.comment|truncatewords:16}}</td>
                     </tr>
@@ -94,6 +94,7 @@
         legend: {show:true, localtion:"ne"},
         highlighter: {
             show: true,
+            formatString:'%s<br> %s commits'
         },
    });    
 </script>

@@ -26,7 +26,9 @@ def home(request):
             'revision',
             'comment', 
             'time', 
-            'repository__name', 
+            'repository__id',
+            'repository__name',
+            'author__id',
             'author__account', 
             'author__display').order_by('-time')[:10]
 
@@ -72,6 +74,7 @@ def project(request, project_id):
             'revision',
             'comment',
             'time',
+            'author__id',
             'author__account',
             'author__display').order_by('-time')[:10]
 
@@ -114,7 +117,7 @@ def person(request, person_id):
     
     #recent commits
     commits = CommitLog.objects.filter(author=author)
-    commits = commits.values('repository__name', 'time', 'comment')
+    commits = commits.values('repository__id', 'repository__name', 'time', 'comment')
     commits = commits.order_by('-time')[0:10]
 
     #personal information
@@ -142,8 +145,9 @@ def person(request, person_id):
         for day in g:
             line = line + '["%s", %d],' % (day['date'], day['commit_count'])
         line = line + ']'
- 
-        stats[project['name']] = line
+
+        if line != '[]':
+            stats[project['name']] = line
 
        
 

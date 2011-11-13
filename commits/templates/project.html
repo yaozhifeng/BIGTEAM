@@ -3,6 +3,7 @@
 
 {% block content %}
 <div id="column-main">
+    <h2 class="caption">{{project.name}}</h2>
     <div class="graph" id="graph"></div>
     <h2 class="caption">Projects overview</h2>
     <div class="part">
@@ -22,7 +23,7 @@
             <tbody>
                 {% for commit in commits  %}
                     <tr>
-                        <td>{% firstof commit.author__display commit.author__account %}</td>
+                        <td><a href="/person/{{commit.author__id}}/">{% firstof commit.author__display commit.author__account %}</a></td>
                        <td>{{commit.time|date:"Y-m-d"}}</td>
                         <td>{{commit.comment|truncatewords:16}}</td>
                     </tr>
@@ -76,6 +77,7 @@
         legend: {show:true, localtion:"ne"},
         highlighter: {
             show: true,
+            formatString:'%s<br> %s commits'
         },
    });    
 </script>

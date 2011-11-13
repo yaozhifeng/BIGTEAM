@@ -3,14 +3,8 @@
 
 {% block content %}
 <div id="column-main">
+    <h2 class="caption">{{coder.display}} ({{coder.account}})</h2>
     <div class="graph" id="graph"></div>
-    <h2 class="caption">Personal overview</h2>
-    <div class="part">
-        <p>Name: {{ coder.display }} </p>
-        <p>Account: {{ coder.account}} </p>
-        <p>Total commits: {{ coder.commits }} </p>
-        <p>Recent commits: {{ coder.recent_commits }} </p>
-   </div>
     <h2 class="caption">Recent commits</h2>
     <div class="part">
          <table class="stats">
@@ -24,7 +18,7 @@
             <tbody>
                 {% for commit in commits  %}
                     <tr>
-                        <td>{{ commit.repository__name  }}</td>
+                        <td><a href="/project/{{commit.repository__id}}/">{{ commit.repository__name  }}</a></td>
                        <td>{{ commit.time|date:"Y-m-d" }}</td>
                         <td>{{ commit.comment|truncatewords:16 }}</td>
                     </tr>
@@ -46,7 +40,7 @@
             <tbody>
                 {% for project in projects  %}
                     <tr>
-                        <td>{{ project.name }}</td>
+                        <td><a href="/project/{{project.id}}/">{{project.name}}</a></td>
                         <td>{{ project.commits_count|intcomma }}</td>
                     </tr>
                 {% endfor %}
@@ -78,6 +72,7 @@
         legend: {show:true, localtion:"ne"},
         highlighter: {
             show: true,
+            formatString:'%s<br> %s commits'
         },
    });    
 </script>
