@@ -3,6 +3,7 @@
 
 {% block content %}
 <div id="column-main">
+    <div class="graph" id="graph"></div>
     <h2 class="caption">Projects overview</h2>
     <div class="part">
         <h3>{{ project.name }}</h3>
@@ -51,4 +52,31 @@
         </table>
    </div>
 </div>
+<script language="javascript">
+    $.jqplot('graph',  [
+    {% for author, line in graph.items %}
+    {{line|safe}},
+    {% endfor %}
+    ],
+    {
+        title: 'Monthly Commit Graph',
+        axes:{
+            xaxis:{
+                renderer:$.jqplot.DateAxisRenderer, 
+                tickInterval: '2 day',
+                tickOptions:{formatString:'%b %#d'}
+            }, 
+            yaxis:{min:0, tickInterval:5}
+        },
+        series: [
+        {% for author, line in graph.items %}
+            {label: "{{author|safe}}"},
+        {% endfor %}
+        ],
+        legend: {show:true, localtion:"ne"},
+        highlighter: {
+            show: true,
+        },
+   });    
+</script>
 {% endblock %}
