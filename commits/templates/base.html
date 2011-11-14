@@ -10,7 +10,7 @@
     <script type="text/javascript" src="{{ STATIC_URL }}js/plugins/jqplot.highlighter.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/plugins/jqplot.cursor.min.js"></script>
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}js/jquery.jqplot.css" />    
-    <title>Souce code Statistics</title>
+    <title>Soucecode Inside</title>
 </head>
 
 <body>
@@ -19,10 +19,11 @@
         <h1><a href="/">Sourcecode Insight</a></h1>
     </div>
     <div id="headmenu" class="box">
-        <!--ul>
+        <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/">Projects</a></li>
-        </ul-->
+            <li style="float:right;margin-right:0;"><a href="/admin/">Admin</a></li>
+        </ul>
     </div>
     <div id="container" class="box">
         {% block content %}content area {% endblock %}

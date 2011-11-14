@@ -52,12 +52,20 @@ def home(request):
     #import pdb
     #pdb.set_trace()
 
+    #generate commit graph for all projects
+    line = '['
+    for day in graph:
+        line = line + '["%s", %d],' %(day['date'], day['commit_count'])
+    line = line + ']'
+    stats_all = line
+
     return render_to_response('home.html',
                 {
                     'projects': projects,
                     'coders': coders,
                     'commits': commits,
                     'graph': stats,
+                    'graph_all': stats_all,
                 },
                 context_instance = RequestContext(request)
             )
@@ -100,12 +108,21 @@ def project(request, project_id):
         if line != '[]':
             stats[coder.display if len(coder.display)>0 else coder.account] = line
 
+    #generate project commit graph
+    line = '['
+    for day in graph:
+        line = line + '["%s", %d],' %(day['date'], day['commit_count'])
+    line = line + ']'
+    stats_all = line
+
+
     return render_to_response('project.html',
             {
                 'project': project,
                 'commits': commits,
                 'coders': coders,
                 'graph': stats,
+                'graph_all': stats_all,
             },
             context_instance = RequestContext(request)
         )

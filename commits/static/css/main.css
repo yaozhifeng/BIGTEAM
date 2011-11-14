@@ -90,6 +90,13 @@ div.graph {
     height: 300px;
 }
 
+div.graph_bar {
+    border: 1px solid #DDDDDD;
+    padding: 10px;
+    margin-bottom: 15px;
+    height: 150px;
+}
+
 #footer {
     -moz-border-radius-bottomleft:5px;
     -moz-border-radius-bottomright:5px;
