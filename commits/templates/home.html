@@ -50,6 +50,7 @@
    </div>
 </div>
 <div id="column-right">
+    <div class="month-picker" id="month-picker"></div>
     <div class="graph_bar" id="graph_bar"></div>
    <h2 class="caption">Coders of the Month</h2>
    <div class="part">
@@ -115,5 +116,17 @@
             formatString:'%s<br> %s commits'
         },
     });
+
+    $(function() {
+        $('.month-picker').datepicker( {
+            dateFormat: 'MM yy',
+            onChangeMonthYear: function(year, month, inst) {
+                url = '/ajax/summary/' + year + '/' + month + '/';
+                $.get(url, function(data) {
+                    alert(data);
+                })
+            }
+        })
+   });
 </script>
 {% endblock %}

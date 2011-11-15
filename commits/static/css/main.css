@@ -97,6 +97,17 @@ div.graph_bar {
     height: 150px;
 }
 
+div.month-picker .ui-datepicker-calendar {
+    display: none;
+}
+div.month-picker .ui-datepicker {
+    border: 0px;
+    padding: 0px;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+
 #footer {
     -moz-border-radius-bottomleft:5px;
     -moz-border-radius-bottomright:5px;
