@@ -100,7 +100,7 @@
         },
     });    
 
-    $.jqplot('graph_bar', [{{graph_all|safe}}],
+    graph_bar = $.jqplot('graph_bar', [{{graph_all|safe}}],
     {
         title: 'Monthly Commit (All)',
         axes:{
@@ -123,7 +123,27 @@
             onChangeMonthYear: function(year, month, inst) {
                 url = '/ajax/summary/' + year + '/' + month + '/';
                 $.get(url, function(data) {
-                    alert(data);
+                    line = '[' + data + ']';
+                    //alert(data);
+                    //graph_bar.series[0].data = data;
+                    //graph_bar.replot({resetAxes:true});
+                    /*graph_bar.destroy();
+                    graph_bar.init('graph_bar', line, {
+                        title: 'Monthly Commit (All)',
+                        axes:{
+                            xaxis:{
+                                renderer:$.jqplot.DateAxisRenderer, 
+                                tickInterval: '5 day',
+                                tickOptions:{formatString:'%b %#d'}
+                            }, 
+                            yaxis:{min:0, tickInterval:20}
+                        },
+                        highlighter: {
+                            show: true,
+                            formatString:'%s<br> %s commits'
+                        },
+                    });
+                    graph_bar.draw();*/
                 })
             }
         })

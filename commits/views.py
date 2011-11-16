@@ -91,38 +91,11 @@ def project(request, project_id):
     coders = coders.annotate(author_commits=Count('commits'))
     coders = coders.order_by('-author_commits')
     
-    #graph of participants contribution
-    #data for generating the graph
-    select_data = {"date": """strftime('%%Y-%%m-%%d', time)"""}
-    graph = CommitLog.objects.filter(time__range=(lastmonth_day, today)).filter(repository=project)
-    graph = graph.extra(select=select_data).values('date').annotate(commit_count=Count('id'))
-
-    stats = {}
-    for coder in coders:
-        g = graph.filter(author=coder)
-        line = '['
-        for day in g:
-            line = line + '["%s", %d],' % (day['date'], day['commit_count'])
-        line = line + ']'
-
-        if line != '[]':
-            stats[coder.display if len(coder.display)>0 else coder.account] = line
-
-    #generate project commit graph
-    line = '['
-    for day in graph:
-        line = line + '["%s", %d],' %(day['date'], day['commit_count'])
-    line = line + ']'
-    stats_all = line
-
-
     return render_to_response('project.html',
             {
                 'project': project,
                 'commits': commits,
                 'coders': coders,
-                'graph': stats,
-                'graph_all': stats_all,
             },
             context_instance = RequestContext(request)
         )
