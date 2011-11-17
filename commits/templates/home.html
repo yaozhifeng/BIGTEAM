@@ -73,80 +73,98 @@
    </div>
 </div>
 <script language="javascript">
-    $.jqplot('graph',  [
-    {% for project, line in graph.items %}
-    {{line|safe}},
-    {% endfor %}
-    ],
-    {
-        title: 'Monthly Commit Graph',
-        axes:{
-            xaxis:{
-                renderer:$.jqplot.DateAxisRenderer, 
-                tickInterval: '2 day',
-                tickOptions:{formatString:'%b %#d'}
-            }, 
-            yaxis:{min:0, tickInterval:5}
-        },
-        series: [
-        {% for project, line in graph.items %}
-            {label: "{{project|safe}}"},
-        {% endfor %}
-        ],
-        legend: {show:true, localtion:"ne"},
-        highlighter: {
-            show: true,
-            formatString:'%s<br> %s commits'
-        },
-    });    
-
-    graph_bar = $.jqplot('graph_bar', [{{graph_all|safe}}],
-    {
-        title: 'Monthly Commit (All)',
-        axes:{
-            xaxis:{
-                renderer:$.jqplot.DateAxisRenderer, 
-                tickInterval: '5 day',
-                tickOptions:{formatString:'%b %#d'}
-            }, 
-            yaxis:{min:0, tickInterval:20}
-        },
-        highlighter: {
-            show: true,
-            formatString:'%s<br> %s commits'
-        },
-    });
-
+    var graph_main;
+    var graph_bar;
     $(function() {
-        $('.month-picker').datepicker( {
+        //create main chart
+        graph_main = new Highcharts.Chart({
+            chart: {
+                renderTo: 'graph',
+                type: 'line'
+            },
+            title: {
+                text: null
+            },
+            credits: { enabled: false },
+            xAxis: {
+                type: 'datetime'
+            },
+            yAxis: {
+                min: 0,
+                title: { text: null },
+            },
+            series: [{
+                //data: [[Date.UTC(2010, 0, 1), 1]]
+            }]
+        });
+
+        //create bar chart
+        graph_bar = new Highcharts.Chart({
+            chart: {
+                renderTo: 'graph_bar',
+                type: 'line'
+            },
+            title: {
+                text: null
+            },
+            credits: { enabled: false },
+            legend: { enabled: false },
+            xAxis: {
+                type: 'datetime'
+            },
+            yAxis: {
+                title: { text: null },
+                min: 0,
+                //tickInterval: 5,
+            },
+            series: [{
+                name: 'Total', 
+                //data: [[Date.UTC(2010, 0, 1), 1]] 
+            }]
+        });
+
+        //initialize month picker
+        $('.month-picker').datepicker({
             dateFormat: 'MM yy',
             onChangeMonthYear: function(year, month, inst) {
+                //update summary graph
+                url = '/ajax/summary/project/' + year + '/' + month + '/';
+                $.get(url, function(data) {
+                    //remove all existing
+                    while (graph_main.series.length >0)
+                        graph_main.series[0].remove(true);
+
+                    //build new data
+                    lines = {};
+                    $.each(data, function(i, item) {
+                        line = lines[item.repository__name];
+                        if (line == null) {
+                            line = {};
+                            line['name'] = item.repository__name;
+                            line['data'] = '[';
+                            lines[item.repository__name] = line;
+                        }
+                        line['data'] = line['data'] + '[' + Date.UTC(item.year, item.month-1, item.day) + ',' + item.commit_count + '], ';
+                    });
+
+                    $.each(lines, function(i, line) {
+                        line.data = line.data + ']';
+                        graph_main.addSeries({name: line.name, data: eval(line.data)});
+                    });
+                });
+
+                //update small graph
                 url = '/ajax/summary/' + year + '/' + month + '/';
                 $.get(url, function(data) {
-                    line = '[' + data + ']';
-                    //alert(data);
-                    //graph_bar.series[0].data = data;
-                    //graph_bar.replot({resetAxes:true});
-                    /*graph_bar.destroy();
-                    graph_bar.init('graph_bar', line, {
-                        title: 'Monthly Commit (All)',
-                        axes:{
-                            xaxis:{
-                                renderer:$.jqplot.DateAxisRenderer, 
-                                tickInterval: '5 day',
-                                tickOptions:{formatString:'%b %#d'}
-                            }, 
-                            yaxis:{min:0, tickInterval:20}
-                        },
-                        highlighter: {
-                            show: true,
-                            formatString:'%s<br> %s commits'
-                        },
+                    newdata = '['; 
+                    $.each(data, function(i, item) {
+                        newdata = newdata + '[' + Date.UTC(item.year, item.month-1, item.day) + ', ' + item.commit_count + '],';
                     });
-                    graph_bar.draw();*/
-                })
-            }
-        })
-   });
+                    newdata = newdata + ']';
+                    graph_bar.series[0].setData(eval(newdata));
+                }); 
+            },
+        });
+    });
 </script>
 {% endblock %}
