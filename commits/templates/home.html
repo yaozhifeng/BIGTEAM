@@ -10,16 +10,16 @@
             <thead>
                 <tr>
                     <th>Name</th>
+                    <th>Description</th>
                     <th>Contributers</th>
-                    <th>Activity</th>
                 </tr>
             </thead>
             <tbody>
                 {% for project in projects  %}
                     <tr>
                         <td><a href="/project/{{project.id}}/">{{project.name}}</a></td>
+                        <td>{{project.desc}}</td>
                         <td>{{project.author_count}}</td>
-                        <td>&nbsp;</td>
                     <tr>
                 {% endfor %}
             </tbody>
@@ -36,15 +36,7 @@
                     <th>Commits</th>
                 </tr>
             </thead>
-            <tbody>
-                {% for commit in commits  %}
-                    <tr>
-                        <td><a href="/person/{{commit.author__id}}/">{% firstof commit.author__display commit.author__account %}</a></td>
-                        <td><a href="/project/{{commit.repository__id}}/">{{commit.repository__name}}</a></td>
-                        <td>{{commit.time|date:"Y-m-d"}}</td>
-                        <td>{{commit.comment|truncatewords:16}}</td>
-                    </tr>
-                {% endfor %}
+            <tbody id="commit_table">
             </tbody>
         </table>
    </div>
@@ -61,14 +53,8 @@
                     <th>Commits</th>
                 </tr>
             </thead>
-            <tbody>
-                {% for coder in coders  %}
-                    <tr>
-                        <td><a href="/person/{{coder.id}}/">{% firstof coder.display coder.account %}</a></td>
-                        <td>{{coder.author_commits|intcomma}}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
+            <tbody id="monthly_commits">
+           </tbody>
         </table>
    </div>
 </div>
@@ -128,7 +114,7 @@
             dateFormat: 'MM yy',
             onChangeMonthYear: function(year, month, inst) {
                 //update summary graph
-                url = '/ajax/summary/project/' + year + '/' + month + '/';
+                url = '/ajax/graph/project/' + year + '/' + month + '/';
                 $.get(url, function(data) {
                     //remove all existing
                     while (graph_main.series.length >0)
@@ -154,7 +140,7 @@
                 });
 
                 //update small graph
-                url = '/ajax/summary/' + year + '/' + month + '/';
+                url = '/ajax/graph/' + year + '/' + month + '/';
                 $.get(url, function(data) {
                     newdata = '['; 
                     $.each(data, function(i, item) {
@@ -162,7 +148,29 @@
                     });
                     newdata = newdata + ']';
                     graph_bar.series[0].setData(eval(newdata));
-                }); 
+                });
+
+                //update commit log
+                url = '/ajax/commits/' + year + '/' + month + '/';
+                $.get(url, function(data) {
+                    $("#commit_table tr").remove();
+                    $.each(data, function(i, row) {
+                        $("#commit_table").append('<tr><td><a href="/project/' + row.repository__id + '/">' + row.repository__name + '</a></td><td><a href="/person/' + row.author__id + '/">'  + row.author__display + '</a></td> <td>' + row.day + ' ' +  row.time + '</td><td>' + row.comment + '</td></tr>');
+                    });
+                })
+
+                //update monthly commits stats
+                url = '/ajax/commits/';
+                url = url + '?year=' + year;
+                url = url + '&month=' + month;
+                $.get(url, function(data) {
+                    $("#monthly_commits tr").remove();
+                    $.each(data, function(i, row) {
+                        $("#monthly_commits").append('<tr><td><a href="/person/' + row.author__id + '/">' + row.author__display + '</a></td> <td>' + row.commit_count + '</td></tr>');
+                    });
+                });
+
+
             },
         });
     });

@@ -72,7 +72,7 @@
                 title: { text: null },
             },
             series: [{
-                data: [[Date.UTC(2010, 0, 1), 1]]
+                //data: [[Date.UTC(2010, 0, 1), 1]]
             }]
         });
 
@@ -96,8 +96,8 @@
                 //tickInterval: 5,
             },
             series: [{
-                name: 'Total', 
-                data: [[Date.UTC(2010, 0, 1), 1]] 
+                //name: 'Total', 
+                //data: [[Date.UTC(2010, 0, 1), 1]] 
             }]
         });
 
@@ -106,7 +106,7 @@
             dateFormat: 'MM yy',
             onChangeMonthYear: function(year, month, inst) {
                 //update project summary graph
-                url = '/ajax/summary/project/' + year + '/' + month + '/';
+                url = '/ajax/graph/project/' + year + '/' + month + '/';
                 url = url + '?project=' + {{project.id}}
                 $.get(url, function(data) {
                     newdata = '['; 

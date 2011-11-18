@@ -11,24 +11,19 @@
             <thead>
                 <tr>
                     <th>Project</th>
-                   <th>Time</th>
+                    <th>Time</th>
                     <th>Commits</th>
                 </tr>
             </thead>
-            <tbody>
-                {% for commit in commits  %}
-                    <tr>
-                        <td><a href="/project/{{commit.repository__id}}/">{{ commit.repository__name  }}</a></td>
-                       <td>{{ commit.time|date:"Y-m-d" }}</td>
-                        <td>{{ commit.comment|truncatewords:16 }}</td>
-                    </tr>
-                {% endfor %}
+            <tbody id="commit_table">
             </tbody>
         </table>
     </div>
 </div>
 <div id="column-right">
-   <h2 class="caption">Related projects</h2>
+    <div class="month-picker" id="month-picker"></div>
+    <div class="graph_bar" id="graph_bar"></div>
+    <h2 class="caption">Monthly contribution</h2>
     <div class="part">
          <table class="stats">
             <thead>
@@ -37,44 +32,156 @@
                     <th>Commits</th>
                 </tr>
             </thead>
-            <tbody>
-                {% for project in projects  %}
-                    <tr>
-                        <td><a href="/project/{{project.id}}/">{{project.name}}</a></td>
-                        <td>{{ project.commits_count|intcomma }}</td>
-                    </tr>
-                {% endfor %}
+            <tbody id="monthly_commits">
+            </tbody>
+        </table>
+    </div>
+    <h2 class="caption">Total contribution</h2>
+    <div class="part">
+         <table class="stats">
+            <thead>
+                <tr>
+                    <th>Project</th>
+                    <th>Commits</th>
+                </tr>
+            </thead>
+            <tbody id="total_commits">
             </tbody>
         </table>
    </div>
+
 </div>
 <script language="javascript">
-    $.jqplot('graph',  [
-    {% for project, line in graph.items %}
-    {{line|safe}},
-    {% endfor %}
-    ],
-    {
-        title: 'Monthly Commit Graph',
-        axes:{
-            xaxis:{
-                renderer:$.jqplot.DateAxisRenderer, 
-                tickInterval: '2 day',
-                tickOptions:{formatString:'%b %#d'}
-            }, 
-            yaxis:{min:0, tickInterval:5}
-        },
-        series: [
-        {% for project, line in graph.items %}
-            {label: "{{project|safe}}"},
-        {% endfor %}
-        ],
-        legend: {show:true, localtion:"ne"},
-        highlighter: {
-            show: true,
-            formatString:'%s<br> %s commits'
-        },
-   });    
+    var graph_main;
+    var graph_bar;
+    $(function() {
+        //create main chart
+        graph_main = new Highcharts.Chart({
+            chart: {
+                renderTo: 'graph',
+                type: 'line'
+            },
+            title: {
+                text: null
+            },
+            credits: { enabled: false },
+            xAxis: {
+                type: 'datetime'
+            },
+            yAxis: {
+                min: 0,
+                title: { text: null },
+            },
+            series: [{
+                //data: [[Date.UTC(2010, 0, 1), 1]]
+            }]
+        });
+
+        //create bar chart
+        graph_bar = new Highcharts.Chart({
+            chart: {
+                renderTo: 'graph_bar',
+                type: 'line'
+            },
+            title: {
+                text: null
+            },
+            credits: { enabled: false },
+            legend: { enabled: false },
+            xAxis: {
+                type: 'datetime'
+            },
+            yAxis: {
+                title: { text: null },
+                min: 0,
+                //tickInterval: 5,
+            },
+            series: [{
+                //name: 'Total', 
+                //data: [[Date.UTC(2010, 0, 1), 1]] 
+            }]
+        });
+
+        //initialize month picker
+        $('.month-picker').datepicker({
+            dateFormat: 'MM yy',
+            onChangeMonthYear: function(year, month, inst) {
+                //update personal monthly commit graph
+                url = '/ajax/graph/' + year + '/' + month + '/';
+                url = url + '?author=' + {{coder.id}}
+                $.get(url, function(data) {
+                    newdata = '['; 
+                    $.each(data, function(i, item) {
+                        newdata = newdata + '[' + Date.UTC(item.year, item.month-1, item.day) + ', ' + item.commit_count + '],';
+                    })
+                    newdata = newdata + ']';
+                    graph_bar.series[0].setData(eval(newdata));
+                })
+
+                //update main graph/per project commit graph
+                url='/ajax/detail/person/' + {{coder.id}} + '/' + year + '/' + month + '/';
+                $.get(url, function(data) {
+                    //remove all existing
+                    while (graph_main.series.length > 0)
+                        graph_main.series[0].remove(true);                    
+
+                    //build new data
+                    lines = {};
+                    $.each(data, function(i, item) {
+                        line = lines[item.repository__name];
+                        if (line == null) {
+                            line = {};
+                            line['name'] = item.repository__name;
+                            line['data'] = '[';
+                            lines[item.repository__name] = line;
+                        }
+                        line['data'] = line['data'] + '[' + Date.UTC(item.year, item.month-1, item.day) + ', ' + item.commit_count + '],';
+
+                    });
+
+                    $.each(lines, function(i, line) {
+                        line.data = line.data + ']';
+                        //alert(line.name + line.data);
+                        graph_main.addSeries({name: line.name, data: eval(line.data)});
+                    });
+                })
+
+                //update commit log
+                url = '/ajax/commits/' + year + '/' + month + '/';
+                url = url + '?author=' + {{coder.id}};
+                $.get(url, function(data) {
+                    $("#commit_table tr").remove();
+                    $.each(data, function(i, row) {
+                        $("#commit_table").append('<tr><td><a href="/project/' + row.repository__id + '/">'  + row.repository__name + '</a></td> <td>' + row.day + ' ' +  row.time + '</td><td>' + row.comment + '</td></tr>');
+                    });
+                })
+
+                //update monthly commits stats
+                url = '/ajax/commits/';
+                url = url + '?author=' + {{coder.id}};
+                url = url + '&year=' + year;
+                url = url + '&month=' + month;
+                $.get(url, function(data) {
+                    $("#monthly_commits tr").remove();
+                    $.each(data, function(i, row) {
+                        $("#monthly_commits").append('<tr><td><a href="/project/' + row.repository__id + '/">' + row.repository__name + '</a></td> <td>' + row.commit_count + '</td></tr>');
+                    });
+                });
+
+                //update total commits stats
+                url = '/ajax/commits/';
+                url = url + '?author=' + {{coder.id}};
+                $.get(url, function(data) {
+                    $("#total_commits tr").remove();
+                    $.each(data, function(i, row) {
+                        $("#total_commits").append('<tr><td><a href="/project/' + row.repository__id + '/">' + row.repository__name + '</a></td> <td>' + row.commit_count + '</td></tr>');
+                    });
+                });
+
+            }
+        });
+
+   });
 </script>
 
 {% endblock %}
