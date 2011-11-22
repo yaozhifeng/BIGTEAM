@@ -123,6 +123,7 @@ INSTALLED_APPS = (
     'commits',
     'django.contrib.humanize',
     'debug_toolbar',
+    'django_cron',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
