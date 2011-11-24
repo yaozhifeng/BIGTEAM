@@ -7,11 +7,10 @@ urlpatterns = patterns('commits.views',
 )
 
 urlpatterns += patterns('commits.ajaxviews',
-    url(r'^ajax/graph/(?P<year>\d+)/(?P<month>\d+)/$', 'overall_summary', name='summary_graph'),
-    url(r'^ajax/graph/project/(?P<year>\d+)/(?P<month>\d+)/$', 'project_summary', name='project_summary_graph'),
-    url(r'^ajax/detail/project/(?P<project_id>\d+)/(?P<year>\d+)/(?P<month>\d+)/$', 'project_detail', name='project_detail_graph'),
-    url(r'^ajax/detail/person/(?P<person_id>\d+)/(?P<year>\d+)/(?P<month>\d+)/$', 'person_detail', name='person_detail_graph'),
-    url(r'^ajax/commits/(?P<year>\d+)/(?P<month>\d+)/$', 'commits_detail', name='commits_detail'),
-    url(r'^ajax/commits/$', 'coder_commits', name='commits_stats'),
+    url(r'^ajax/graph/summary/$', 'overall_commits', name='overall_commits'),
+    url(r'^ajax/graph/project/$', 'project_commits', name='project_commits'),
+    url(r'^ajax/graph/person/$', 'person_commits', name='person_commits'),
+    url(r'^ajax/commits/detail/$', 'commits_detail', name='commits_detail'),
+    url(r'^ajax/commits/stats/$', 'commits_stats', name='commits_stats'),
 
 )

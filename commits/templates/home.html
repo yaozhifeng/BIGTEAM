@@ -115,7 +115,7 @@
             dateFormat: 'MM yy',
             onChangeMonthYear: function(year, month, inst) {
                 //update summary graph
-                url = '{% url home %}ajax/graph/project/' + year + '/' + month + '/';
+                url = '{% url home %}ajax/graph/project/?year=' + year + '&month=' + month;
                 $.get(url, function(data) {
                     //remove all existing
                     while (graph_main.series.length >0)
@@ -131,7 +131,7 @@
                             line['data'] = '[';
                             lines[item.repository__name] = line;
                         }
-                        line['data'] = line['data'] + '[' + Date.UTC(item.year, item.month-1, item.day) + ',' + item.commit_count + '], ';
+                        line['data'] = line['data'] + '[' + Date.parse(item.date) + ',' + item.commit_count + '], ';
                     });
 
                     $.each(lines, function(i, line) {
@@ -141,29 +141,27 @@
                 });
 
                 //update small graph
-                url = '{% url home %}ajax/graph/' + year + '/' + month + '/';
+                url = '{% url home %}ajax/graph/summary/?year=' + year + '&month=' + month;
                 $.get(url, function(data) {
                     newdata = '['; 
                     $.each(data, function(i, item) {
-                        newdata = newdata + '[' + Date.UTC(item.year, item.month-1, item.day) + ', ' + item.commit_count + '],';
+                        newdata = newdata + '[' + Date.parse(item.date) + ', ' + item.commit_count + '],';
                     });
                     newdata = newdata + ']';
                     graph_bar.series[0].setData(eval(newdata));
                 });
 
                 //update commit log
-                url =  '{% url home %}ajax/commits/' + year + '/' + month + '/';
+                url =  '{% url home %}ajax/commits/detail/?year=' + year + '&month=' + month;
                 $.get(url, function(data) {
                     $("#commit_table tr").remove();
                     $.each(data, function(i, row) {
-                        $("#commit_table").append('<tr><td><a href="{% url home %}project/' + row.repository__id + '/">' + row.repository__name + '</a></td><td><a href="/person/' + row.author__id + '/">'  + row.author__display + '</a></td> <td>' + row.day + ' ' +  row.time + '</td><td>' + row.comment + '</td></tr>');
+                        $("#commit_table").append('<tr><td><a href="{% url home %}project/' + row.repository__id + '/">' + row.repository__name + '</a></td><td><a href="/person/' + row.author__id + '/">'  + row.author__display + '</a></td> <td>' + row.date + ' ' +  row.time + '</td><td>' + row.comment + '</td></tr>');
                     });
                 })
 
                 //update monthly commits stats
-                url =  '{% url home %}ajax/commits/';
-                url = url + '?year=' + year;
-                url = url + '&month=' + month;
+                url =  '{% url home %}ajax/commits/stats/?year=' + year + '&month=' + month;
                 $.get(url, function(data) {
                     $("#monthly_commits tr").remove();
                     $.each(data, function(i, row) {

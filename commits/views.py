@@ -27,15 +27,6 @@ def project(request, project_id):
     today = datetime.date.today()
     lastmonth_day = today - datetime.timedelta(days=30)
 
-    #recent commits
-    commits = project.commits.values(
-            'revision',
-            'comment',
-            'time',
-            'author__id',
-            'author__account',
-            'author__display').order_by('-time')[:10]
-
     #participants
     coders = Author.objects.filter(commits__repository=project)
     coders = coders.annotate(author_commits=Count('commits'))
@@ -44,7 +35,6 @@ def project(request, project_id):
     return render_to_response('project.html',
             {
                 'project': project,
-                'commits': commits,
                 'coders': coders,
             },
             context_instance = RequestContext(request)
