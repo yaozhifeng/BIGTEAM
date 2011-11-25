@@ -29,7 +29,7 @@ def CookList(data):
     for row in data:
         if 'date' in row:
             if hasattr(row['date'], 'strftime'):
-                row['date'] = row['data'].strftime('%Y-%m-%d')
+                row['date'] = row['date'].strftime('%Y-%m-%d')
         if 'time' in row:
             if hasattr(row['time'], 'strftime'):
                 row['time'] = row['time']. strftime('%H:%M')
