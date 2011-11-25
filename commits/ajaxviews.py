@@ -22,6 +22,20 @@ def FilterParams(request, query):
 
     return query
 
+#cook the list return from database
+#change datetime type to string
+#return json serialized data
+def CookList(data):
+    for row in data:
+        if 'date' in row:
+            if hasattr(row['date'], 'strftime'):
+                row['date'] = row['data'].strftime('%Y-%m-%d')
+        if 'time' in row:
+            if hasattr(row['time'], 'strftime'):
+                row['time'] = row['time']. strftime('%H:%M')
+
+    return json.dumps(data)
+
 #Graph data
 #ajax view for overall summary
 #return list of {"date": date, "commit_count": commit_count}
@@ -35,8 +49,9 @@ def overall_commits(request):
     graph = graph.extra(select=select_data).values('date').annotate(commit_count=Count('id'))
 
     graph = FilterParams(request, graph)
+    data = CookList(list(graph))
 
-    return HttpResponse(json.dumps(list(graph)), 'application/json')
+    return HttpResponse(data, 'application/json')
 
 #Graph data
 #ajax view for daily commits statistics
@@ -52,7 +67,7 @@ def project_commits(request):
 
     graph = FilterParams(request, graph)
 
-    return HttpResponse(json.dumps(list(graph)), 'application/json')
+    return HttpResponse(CookList(list(graph)), 'application/json')
 
 #Graph data
 #ajax view for project detail, per author contributes
@@ -67,7 +82,7 @@ def person_commits(request):
     graph = graph.extra(select=select_data).values('author__account', 'author__display', 'author__id', 'date').annotate(commit_count=Count('id'))
     graph = FilterParams(request, graph)
 
-    return HttpResponse(json.dumps(list(graph)), 'application/json')
+    return HttpResponse(CookList(list(graph)), 'application/json')
 
 
 #List data
@@ -86,7 +101,7 @@ def commits_detail(request):
     commits = FilterParams(request, commits)
     commits = commits.order_by('-date', '-time')[:20]
 
-    return HttpResponse(json.dumps(list(commits)), 'application/json')
+    return HttpResponse(CookList(list(commits)), 'application/json')
 
 #List data
 #ajax view for coder contributes
