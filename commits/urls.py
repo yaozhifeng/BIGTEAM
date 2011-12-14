@@ -12,5 +12,6 @@ urlpatterns += patterns('commits.ajaxviews',
     url(r'^ajax/graph/person/$', 'person_commits', name='person_commits'),
     url(r'^ajax/commits/detail/$', 'commits_detail', name='commits_detail'),
     url(r'^ajax/commits/stats/$', 'commits_stats', name='commits_stats'),
+    url(r'^ajax/commits/project/$', 'commits_project', name='commits_project'),
 
 )

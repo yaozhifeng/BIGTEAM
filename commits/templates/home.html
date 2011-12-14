@@ -57,7 +57,20 @@
             <tbody id="monthly_commits">
            </tbody>
         </table>
-   </div>
+    </div>
+    <h2 class="caption">Projects of the Month</h2>
+    <div class="part">
+        <table class="stats">
+            <thead>
+                <tr>
+                    <th>Project</th>
+                    <th>Commits</th>
+                </tr>
+            </thead>
+            <tbody id="monthly_projects">
+            </tbody>
+        </table>
+    </div>
 </div>
 <script language="javascript">
     var graph_main;
@@ -169,6 +182,14 @@
                     });
                 });
 
+                //update monthly projects stats
+                url = '{% url home %}ajax/commits/project/?year=' + year + '&month=' + month;
+                $.get(url, function(data) {
+                    $("#monthly_projects tr").remove();
+                    $.each(data, function(i, row) {
+                        $("#monthly_projects").append('<tr><td><a href="{% url home %}project/' + row.repository__id + '/">' + row.repository__name + '</a</td> <td>' + row.commit_count + '</td></tr>');
+                    });
+                });
 
             },
         });

@@ -119,4 +119,20 @@ def commits_stats(request):
 
     return HttpResponse(json.dumps(list(commits)), 'application/json')
 
+#List data
+#ajax view for project summary
+#return a list of {"repository__id", "repository__name",  "commit_count"}
+#optional GET params: author, project, author, month, year
+def commits_project(request):
+    if not request.is_ajax():
+        return HttpResponse(status=400)
+
+    commits = CommitLog.objects.all()
+    commits = FilterParams(request, commits)
+    commits = commits.values('repository__id', 'repository__name')
+    commits = commits.annotate(commit_count=Count('id'))
+    commits = commits.order_by('-commit_count')[:10]
+
+    return HttpResponse(json.dumps(list(commits)), 'application/json')
+
 
