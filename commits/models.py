@@ -4,15 +4,8 @@ from django.core.exceptions import ObjectDoesNotExist
 import datetime
 from svnclient.svnlogclient import SVNLogClient
 from svnclient.svnlogiter import SVNRevLogIter
-
-BINARYFILEXT = [ 'doc', 'xls', 'ppt', 'docx', 'xlsx', 'pptx', 'dot', 'dotx', 'ods', 'odm', 'odt', 'ott', 'pdf',
-                 'o', 'a', 'obj', 'lib', 'dll', 'so', 'exe',
-                 'jar', 'zip', 'z', 'gz', 'tar', 'rar','7z',
-                 'pdb', 'idb', 'ilk', 'bsc', 'ncb', 'sbr', 'pch', 'ilk',
-                 'bmp', 'dib', 'jpg', 'jpeg', 'png', 'gif', 'ico', 'pcd', 'wmf', 'emf', 'xcf', 'tiff', 'xpm',
-                 'gho', 'mp3', 'wma', 'wmv','wav','avi'
-                 ]
-
+import logging
+logger = logging.getLogger(__name__)
 
 # Create your models here.
 
@@ -30,7 +23,8 @@ class Repository(models.Model):
         CommitLog.objects.filter(repository=self).delete()
 
     def update(self):
-        svnclient = SVNLogClient(self.url, username=self.username, password=self.password)
+        svnclient = SVNLogClient(self.url, username=self.username, 
+                password=self.password)
         try:
             laststoredrev = self.getLastStoredRev()
             rootUrl = svnclient.getRootUrl()
@@ -42,8 +36,7 @@ class Repository(models.Model):
 
             self.save()
         except Exception as e:
-            print 'Exception updating project'
-            print e
+            logger.error('Exception updating project - %s' % e)
 
     def convert(self, svnclient, startrev, endrev):
         svnloglist = SVNRevLogIter(svnclient, startrev, endrev)
@@ -57,10 +50,10 @@ class Repository(models.Model):
                         author = self.addAuthor(rev.author),
                         comment = rev.message)
                     log.save()
-                    print 'converted revision %d' % rev.revno
+                    logger.info( 'converted revision %d' % rev.revno )
                 except Exception as e:
-                    print 'exception converting revision %d' % rev.revno
-                    print e
+                    logger.error('exception converting revision %d' % \
+                            rev.revno)
 
     def addAuthor(self, account):
         try:
@@ -97,4 +90,6 @@ class CommitLog(models.Model):
     def __unicode__(self):
         return 'r%d' % self.revision
 
-
+def UpdateRepositories():
+    for rep in Repository.objects.all():
+        rep.update()

@@ -50,4 +50,8 @@ def person(request, person_id):
             context_instance = RequestContext(request)
         )
 
+#update all
+def update_all(request):
+    UpdateRepositories();
 
+    return redirect('home')

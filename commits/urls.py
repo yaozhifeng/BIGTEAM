@@ -4,6 +4,7 @@ urlpatterns = patterns('commits.views',
     url(r'^$', 'home', name='home'),
     url(r'^project/(?P<project_id>\d+)/$', 'project', name='project'),
     url(r'^person/(?P<person_id>\d+)/$', 'person', name='person'),
+    url(r'^update_all/$', 'update_all', name='update_all'),
 )
 
 urlpatterns += patterns('commits.ajaxviews',
