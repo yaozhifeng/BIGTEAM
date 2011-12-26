@@ -63,12 +63,12 @@ STATIC_ROOT = os.path.join(SETTINGS_PATH, 'static/')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
+STATIC_URL = '/bigteam/static/'
 
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
 # Examples: "http://foo.com/static/admin/", "/static/admin/".
-ADMIN_MEDIA_PREFIX = '/static/admin/'
+ADMIN_MEDIA_PREFIX = '/bigteam/static/admin/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
