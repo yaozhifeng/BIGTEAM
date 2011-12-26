@@ -11,10 +11,13 @@ logger = logging.getLogger(__name__)
 
 class Repository(models.Model):
     name = models.CharField('name', max_length=50)
-    desc = models.CharField('description', max_length=250)
+    desc = models.CharField('description', max_length=250, null=True,
+            blank=True)
     url = models.CharField('repository url', max_length=500)
     username = models.CharField('username', max_length=50)
     password = models.CharField('password', max_length=50)
+    sourceview = models.CharField('source view', max_length=50, null=True,
+            blank=True)
 
     def __unicode__(self):
         return self.name
