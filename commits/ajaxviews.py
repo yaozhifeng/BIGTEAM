@@ -63,7 +63,8 @@ def project_commits(request):
 
     select_data = {"date": """DATE(time)"""}
     graph = CommitLog.objects.all()
-    graph = graph.extra(select=select_data).values('repository__id', 'repository__name', 'date').annotate(commit_count=Count('id'))
+    graph = graph.extra(select=select_data).values('repository__id', 
+            'repository__name', 'date').annotate(commit_count=Count('id'))
 
     graph = FilterParams(request, graph)
 
@@ -79,7 +80,9 @@ def person_commits(request):
     
     select_data = {"date": """DATE(time)"""}
     graph = CommitLog.objects.all()
-    graph = graph.extra(select=select_data).values('author__account', 'author__display', 'author__id', 'date').annotate(commit_count=Count('id'))
+    graph = graph.extra(select=select_data).values('author__account', 
+            'author__display', 'author__id', 'date'
+            ).annotate(commit_count=Count('id'))
     graph = FilterParams(request, graph)
 
     return HttpResponse(CookList(list(graph)), 'application/json')
@@ -96,7 +99,9 @@ def commits_detail(request):
     select_data = {"date": """DATE(time)""", "time": """TIME(time)"""}
     commits = CommitLog.objects.all()
     commits = commits.extra(select=select_data)
-    commits = commits.values('repository__id', 'repository__name', 'author__display', 'author__account', 'author__id', 'date', 'time', 'comment', 'revision');
+    commits = commits.values('repository__id', 'repository__name', 
+            'author__display', 'author__account', 'author__id', 
+            'date', 'time', 'comment', 'revision', 'repository__sourceview');
 
     commits = FilterParams(request, commits)
     commits = commits.order_by('-date', '-time')[:20]
@@ -113,7 +118,8 @@ def commits_stats(request):
 
     commits = CommitLog.objects.all()
     commits = FilterParams(request, commits)
-    commits = commits.values('repository__id', 'repository__name', 'author__id', 'author__account', 'author__display')
+    commits = commits.values('repository__id', 'repository__name', 
+            'author__id', 'author__account', 'author__display')
     commits = commits.annotate(commit_count=Count('id'))
     commits = commits.order_by('-commit_count')[:10]
 

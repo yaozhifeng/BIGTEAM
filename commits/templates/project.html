@@ -151,7 +151,8 @@
                 $.get(url, function(data) {
                     $("#commit_table tr").remove();
                     $.each(data, function(i, row) {
-                        $("#commit_table").append('<tr><td><a href="{%url home %}person/' + row.author__id + '/">'  + row.author__display + '</a></td> <td>' + row.date + ' ' +  row.time + '</td><td>' + row.comment + '</td></tr>');
+                        rev_link = row.repository__sourceview + row.revision
+                        $("#commit_table").append('<tr><td><a href="{%url home %}person/' + row.author__id + '/">'  + row.author__display + '</a></td> <td>' + row.date + ' ' +  row.time + '</td><td><a target="_blank" href="' + rev_link + '">' + row.comment + '</a></td></tr>');
                     });
                 })
 
