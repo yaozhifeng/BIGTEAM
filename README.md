@@ -1,7 +1,7 @@
 BIG TEAM
 ========
 
-Bigteam is a simple web application to measure team productivity. It checks your subversion repositories and give you an overview of how your team members hade been doing. It include 4 simple views.
+Bigteam is a simple web application to measure team productivity. It checks your subversion repositories and give you an overview of how your team members hade been doing. It include 3 simple views.
 
 Home view
 ---------
