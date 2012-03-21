@@ -1,1 +1,1 @@
-from development_settings import *
+from production_settings import *
