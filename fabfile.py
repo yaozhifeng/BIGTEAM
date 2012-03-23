@@ -2,7 +2,7 @@ from fabric.api import *
 from fabric.contrib.files import exists
 
 env.hosts = ['chenxia@172.16.16.38']
-env.password = 'Ie4cgqrx'
+env.password = 'rdSleCsq'
 site_dir = '/var/sites/bigteam'
 
 @task
