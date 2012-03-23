@@ -1,10 +1,11 @@
 # Create your views here.
 from django.http import HttpResponse
 from django.template import RequestContext
-from django.shortcuts import render_to_response, redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404
 from django.db.models import Sum, Count
 import datetime
 from models import *
+from coffin.shortcuts import render_to_response
 
 #home view
 def home(request):
