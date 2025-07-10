@@ -1,0 +1,37 @@
+{% load i18n %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us" >
+<head>
+    <link type="text/css" href="{{ STATIC_URL }}css/main.css" rel="stylesheet">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" media="screen" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/base/jquery-ui.css">
+    <script type="text/javascript" src="{{ STATIC_URL }}js/highcharts.js"></script>
+    <title>Soucecode Inside</title>
+</head>
+
+<body>
+    <div id="wrapper">
+    <div id="header" class="box">
+        <h1>Sourcecode Insight</h1>
+    </div>
+    <div id="headmenu" class="box">
+        <ul>
+            <li><a href="{% url home %}">Home</a></li>
+            <!--li><a href="{% url home %}">Projects</a></li>
+            <li><a href="/">Repositories</a></li>
+            <li><a href="/">Participants</a></li-->
+            <li style="float:right;margin-right:0;"><a href="{% url home %}admin/">Admin</a></li>
+             <li style="float:right;"><a href="{% url home %}update_all/">Update</a></li>
+       </ul>
+    </div>
+    <div id="container" class="box">
+        {% block content %}content area {% endblock %}
+    </div>
+    <div id="footer" class="box">
+        <p>Powered by <a href="https://github.com/yaozhifeng/bigteam" target="_blank">BIGTEAM</a> </p>
+    </div>
+    </div>
+</body>
+
+
