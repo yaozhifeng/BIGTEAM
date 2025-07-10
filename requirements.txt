@@ -1,0 +1,25 @@
+# Django 4.2 BigTeam Requirements
+
+# Core framework
+Django==4.2.7
+
+# Version Control Support
+pysvn==1.9.20
+GitPython==3.1.40
+
+# Database
+sqlite3  # Built-in with Python
+
+# Development & Debugging
+django-debug-toolbar==4.2.0
+
+# Utilities
+python-dateutil==2.8.2
+
+# Security
+cryptography==41.0.8
+
+# Optional: Future enhancements
+# djangorestframework==3.14.0  # For API support
+# channels==4.0.0              # For WebSocket support
+# celery==5.3.4                # For background tasks

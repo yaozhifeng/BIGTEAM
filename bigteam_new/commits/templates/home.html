@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block content %}
+<div id="column-main">
+    <h2 class="caption">Commits overview</h2>
+    <div class="graph" id="graph"></div>
+    <h2 class="caption">Projects overview</h2>
+    <div class="part">
+        <table class="stats">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Contributers</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for project in projects  %}
+                    <tr>
+                        <td><a href="{%url home %}project/{{project.id}}/">{{project.name}}</a></td>
+                        <td>{{project.desc}}</td>
+                        <td>{{project.author_count}}</td>
+                    <tr>
+                {% endfor %}
+            </tbody>
+        </table>
+   </div>
+    <h2 class="caption">Recent commits</h2>
+    <div class="part">
+        <table class="stats">
+            <thead>
+                <tr>
+                    <th>Coder</th>
+                    <th>Project</th>
+                    <th>Time</th>
+                    <th>Commits</th>
+                </tr>
+            </thead>
+            <tbody id="commit_table">
+            </tbody>
+        </table>
+   </div>
+</div>
+<div id="column-right">
+    <div class="month-picker" id="month-picker"></div>
+    <div class="graph_bar" id="graph_bar"></div>
+   <h2 class="caption">Coders of the Month</h2>
+   <div class="part">
+        <table class="stats">
+            <thead>
+                <tr>
+                    <th>Coder</th>
+                    <th>Commits</th>
+                </tr>
+            </thead>
+            <tbody id="monthly_commits">
+           </tbody>
+        </table>
+    </div>
+    <h2 class="caption">Projects of the Month</h2>
+    <div class="part">
+        <table class="stats">
+            <thead>
+                <tr>
+                    <th>Project</th>
+                    <th>Commits</th>
+                </tr>
+            </thead>
+            <tbody id="monthly_projects">
+            </tbody>
+        </table>
+    </div>
+</div>
+<script language="javascript">
+    var graph_main;
+    var graph_bar;
+    $(function() {
+        //create main chart
+        graph_main = new Highcharts.Chart({
+            chart: {
+                renderTo: 'graph',
+                type: 'line'
+            },
+            title: {
+                text: null
+            },
+            credits: { enabled: false },
+            xAxis: {
+                type: 'datetime'
+            },
+            yAxis: {
+                min: 0,
+                title: { text: null },
+            },
+            series: [{
+                //data: [[Date.UTC(2010, 0, 1), 1]]
+            }]
+        });
+
+        //create bar chart
+        graph_bar = new Highcharts.Chart({
+            chart: {
+                renderTo: 'graph_bar',
+                type: 'line'
+            },
+            title: {
+                text: null
+            },
+            credits: { enabled: false },
+            legend: { enabled: false },
+            xAxis: {
+                type: 'datetime'
+            },
+            yAxis: {
+                title: { text: null },
+                min: 0,
+                //tickInterval: 5,
+            },
+            series: [{
+                name: 'Total', 
+                //data: [[Date.UTC(2010, 0, 1), 1]] 
+            }]
+        });
+
+        //initialize month picker
+        $('.month-picker').datepicker({
+            dateFormat: 'MM yy',
+            onChangeMonthYear: function(year, month, inst) {
+                //update summary graph
+                url = '{% url home %}ajax/graph/project/?year=' + year + '&month=' + month;
+                $.get(url, function(data) {
+                    //remove all existing
+                    while (graph_main.series.length >0)
+                        graph_main.series[0].remove(true);
+
+                    //build new data
+                    lines = {};
+                    $.each(data, function(i, item) {
+                        line = lines[item.repository__name];
+                        if (line == null) {
+                            line = {};
+                            line['name'] = item.repository__name;
+                            line['data'] = '[';
+                            lines[item.repository__name] = line;
+                        }
+                        line['data'] = line['data'] + '[' + Date.parse(item.date) + ',' + item.commit_count + '], ';
+                    });
+
+                    $.each(lines, function(i, line) {
+                        line.data = line.data + ']';
+                        graph_main.addSeries({name: line.name, data: eval(line.data)});
+                    });
+                });
+
+                //update small graph
+                url = '{% url home %}ajax/graph/summary/?year=' + year + '&month=' + month;
+                $.get(url, function(data) {
+                    newdata = '['; 
+                    $.each(data, function(i, item) {
+                        newdata = newdata + '[' + Date.parse(item.date) + ', ' + item.commit_count + '],';
+                    });
+                    newdata = newdata + ']';
+                    graph_bar.series[0].setData(eval(newdata));
+                });
+
+                //update commit log
+                url =  '{% url home %}ajax/commits/detail/?year=' + year + '&month=' + month;
+                $.get(url, function(data) {
+                    $("#commit_table tr").remove();
+                    $.each(data, function(i, row) {
+                        rev_link = row.repository__sourceview +  row.revision
+                        $("#commit_table").append('<tr><td><a href="{% url home %}project/' + row.repository__id + '/">' + row.repository__name + '</a></td><td><a href="/person/' + row.author__id + '/">'  + row.author__display + '</a></td> <td>' + row.date + ' ' +  row.time + '</td><td><a target="_blank" href="' + rev_link +'">' + row.comment + '</a></td></tr>');
+                    });
+                })
+
+                //update monthly commits stats
+                url =  '{% url home %}ajax/commits/stats/?year=' + year + '&month=' + month;
+                $.get(url, function(data) {
+                    $("#monthly_commits tr").remove();
+                    $.each(data, function(i, row) {
+                        $("#monthly_commits").append('<tr><td><a href="{% url home %}person/' + row.author__id + '/">' + row.author__display + '</a></td> <td>' + row.commit_count + '</td></tr>');
+                    });
+                });
+
+                //update monthly projects stats
+                url = '{% url home %}ajax/commits/project/?year=' + year + '&month=' + month;
+                $.get(url, function(data) {
+                    $("#monthly_projects tr").remove();
+                    $.each(data, function(i, row) {
+                        $("#monthly_projects").append('<tr><td><a href="{% url home %}project/' + row.repository__id + '/">' + row.repository__name + '</a</td> <td>' + row.commit_count + '</td></tr>');
+                    });
+                });
+
+            },
+        });
+    });
+</script>
+{% endblock %}
