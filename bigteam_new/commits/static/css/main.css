@@ -1,202 +1,123 @@
-/* main style file */
-
-html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
-    margin:0;
-    padding:0;
-}
-*:active {outline:none;}
-
+/* Basic styling for BigTeam application */
 body {
-    background-color: #EFEFEF;
-    color: #666666; 
-    font-family: helvetica;
-    font-size: 12px;
-    margin: 0 auto;
+    font-family: Arial, sans-serif;
+    margin: 0;
     padding: 0;
-    text-align: center;
-    width:960px;
+    background-color: #f5f5f5;
 }
 
 #wrapper {
-    margin-top:50px;
-    float:left;
-    border:1px solid #DDDDDD;
-    -moz-border-radius:5px;
-    -webkit-border-radius:5px;
-    border-radius:5px;
-    -moz-box-shadow:0 0 20px #666666;
-    -webkit-box-shadow:0 0 20px #666666;
-    box-shadow:0 0 20px #666666;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.box {
+    padding: 20px;
 }
 
 #header {
-    -moz-border-radius-topleft:5px;
-    -moz-border-radius-topright:5px;
-    -webkit-border-top-left-radius:5px;
-    -webkit-border-top-right-radius:5px
-    border-radius:5px 5px 0 0;
-    text-align:center;
+    background-color: #2c3e50;
+    color: white;
+    text-align: center;
 }
+
+#header h1 {
+    margin: 0;
+    font-size: 2em;
+}
+
 #headmenu {
-    margin-bottom:15px;
-    background-color:#DDDDDD;
-    border-bottom:1px solid #DCDCDC;
-    border-top:1px solid #DCDCDC;
+    background-color: #34495e;
+    padding: 10px 20px;
 }
-#adminmenu {
-    background-color:#AAAAAA;
-    border-bottom:1px solid #DCDCDC;
-    border-top:1px solid #DCDCDC;
+
+#headmenu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
-.warn {
-    background-color:#DDDDDD;
-    border-bottom:1px solid #DCDCDC;
-    border-top:1px solid #DCDCDC;
-    margin-top:15px;
-    margin-bottom:15px;
+
+#headmenu li {
+    display: inline-block;
+    margin-right: 20px;
 }
+
+#headmenu a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    display: block;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+#headmenu a:hover {
+    background-color: #2c3e50;
+}
+
 #container {
-    /*padding:20px 0;
-     */
-    padding-top: 0px;
-    text-align:left;
-    /*
-    width:600px;
-    */
+    min-height: 500px;
+    padding: 30px;
 }
-
-#column-main {
-    width: 640px;
-    float: left;
-}
-#column-right {
-    width: 300px;
-    float: right;
-}
-h2.caption {
-    height: 20px;
-    background-color: #DDDDDD;
-    padding: 4px;
-}
-div.part {
-    border: 1px solid #DDDDDD;
-    padding: 10px;
-    margin-bottom: 15px;
-}
-div.graph {
-    border: 1px solid #DDDDDD;
-    padding: 0px;
-    margin-bottom: 15px;
-    height: 300px;
-}
-
-div.graph_bar {
-    border: 1px solid #DDDDDD;
-    padding: 0px;
-    margin-bottom: 15px;
-    height: 150px;
-}
-
-div.month-picker .ui-datepicker-calendar {
-    display: none;
-}
-div.month-picker .ui-datepicker {
-    border: 0px;
-    padding: 0px;
-    width: 100%;
-    margin-bottom: 15px;
-}
-
 
 #footer {
-    -moz-border-radius-bottomleft:5px;
-    -moz-border-radius-bottomright:5px;
-    -webkit-border-bottom-left-radius:5px;
-    -webkit-border-bottom-right-radius:5px;
-    border-radius:0 0 5px 5px;
-    background-color:#DDDDDD;
-    border-top:1px solid #DCDCDC;
-    text-align:center;
+    background-color: #ecf0f1;
+    text-align: center;
+    color: #7f8c8d;
+    border-top: 1px solid #bdc3c7;
 }
-.box {
-    margin:0;
-    padding:15px;
-    position:relative;
-    text-align:left;
-    width:960px;
-    float:left;
+
+#footer a {
+    color: #3498db;
+    text-decoration: none;
 }
-#header h1 {
-    color:#FFFFFF;
-    font-family:arial;
-    margin:0 auto;
-    text-shadow:1px 1px 5px #666666;
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
 }
-thead tr {
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f8f9fa;
     font-weight: bold;
-    border-bottom: 1px solid #DDDDDD;
 }
 
-div.bar {
-    width: 80px;
-    /*background-color: #DDDDDD;*/
-    display: block;
-    float: left;
-    height: 12px;
-    margin: 0 4px;
+tr:hover {
+    background-color: #f5f5f5;
 }
 
-div.gauge {
-     -moz-border-radius:2px;
-    -webkit-border-radius:2px;
-    border-radius:2px;
-    background-color: #00FF00;
-    float: left;
-    height: 12px;
+/* Button styling */
+.btn {
+    background-color: #3498db;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
 }
 
-tr.even {
-    height: 28px;
-}
-tr.odd {
-    height: 28px;
-    background-color: #DDDDDD;
+.btn:hover {
+    background-color: #2980b9;
 }
 
-ul {
-    list-style:none outside none;
-}
-ul > li {
-    -moz-border-radius:5px;
-    -webkit-border-radius:5px;
-    border-radius:5px;
-    background-color:#EFEFEF;
-    border:1px solid #AAAAAA;
-    display:block;
-    float:left;
-    margin-right:10px;
-}
-ul > li:hover {
-    background-color:#DDDDDD;
-}
-ul li a {
-    display:block;
-    padding:4px 15px;
-}
-a, ul li a:hover {
-    color:#666666;
-    /*text-decoration:none;*/
-}
-a:hover {
-    text-decoration:underline;
-}
-table.stats {
-    border-collapse:collapse;
-    width:100%;
-}
-table.stats td {
-    font-size:12px;
-    padding:2px;
-    vertical-align:middle;
+/* Chart container */
+.chart-container {
+    margin: 20px 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
 }
 

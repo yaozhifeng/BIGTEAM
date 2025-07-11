@@ -1,9 +1,9 @@
 # Create Ajax views here.
 from django.http import HttpResponse
-from django.shortcuts import render_to_response, redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404
 from django.db.models import Sum, Count
 import datetime
-from models import *
+from .models import *
 from django.core import serializers
 import json
 import pdb
@@ -11,14 +11,14 @@ import pdb
 #Internal helper
 #process query by params in request
 def FilterParams(request, query):
-    if request.REQUEST.__contains__('author'):
-        query = query.filter(author=request.REQUEST['author'])
-    if request.REQUEST.__contains__('year'):
-        query = query.filter(time__year=request.REQUEST['year'])
-    if request.REQUEST.__contains__('month'):
-        query = query.filter(time__month=request.REQUEST['month'])
-    if request.REQUEST.__contains__('project'):
-        query = query.filter(repository=request.REQUEST['project'])
+    if 'author' in request.GET:
+        query = query.filter(author=request.GET['author'])
+    if 'year' in request.GET:
+        query = query.filter(time__year=request.GET['year'])
+    if 'month' in request.GET:
+        query = query.filter(time__month=request.GET['month'])
+    if 'project' in request.GET:
+        query = query.filter(repository=request.GET['project'])
 
     return query
 
@@ -36,12 +36,16 @@ def CookList(data):
 
     return json.dumps(data)
 
+# Helper function to check if request is AJAX
+def is_ajax(request):
+    return request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
 #Graph data
 #ajax view for overall summary
 #return list of {"date": date, "commit_count": commit_count}
 #optional GET param: author, project, year, month
 def overall_commits(request):
-    if not request.is_ajax():
+    if not is_ajax(request):
         return HttpResponse(status=400)
 
     select_data = {"date": """DATE(time)"""}
@@ -58,7 +62,7 @@ def overall_commits(request):
 #return a list of {"repository__id", "repository__name", "date", "commit_count"}
 #optional params: author, project, year, month
 def project_commits(request):
-    if not request.is_ajax():
+    if not is_ajax(request):
         return HttpResponse(status=400)
 
     select_data = {"date": """DATE(time)"""}
@@ -75,7 +79,7 @@ def project_commits(request):
 #return a list of {"author__id", "auhor__account", "author__display", "date", "commit_count"}
 #optional params: author, project, year, month
 def person_commits(request):
-    if not request.is_ajax():
+    if not is_ajax(request):
         return HttpResponse(status=400)
     
     select_data = {"date": """DATE(time)"""}
@@ -93,7 +97,7 @@ def person_commits(request):
 #return a list of {"repository__id", "repository__name", "auhor__id", "author__account", "author__display", "date", "time", "comment", "revision"}
 #optional GET params: project, author, year, month
 def commits_detail(request):
-    if not request.is_ajax():
+    if not is_ajax(request):
         return HttpResponse(status=400)
 
     select_data = {"date": """DATE(time)""", "time": """TIME(time)"""}
@@ -113,7 +117,7 @@ def commits_detail(request):
 #return a list of {"repository__id", "repository__name", "authro__id", "author__account", "author__display", "commit_count"}
 #optional GET params: author, project, author, month, year
 def commits_stats(request):
-    if not request.is_ajax():
+    if not is_ajax(request):
         return HttpResponse(status=400)
 
     commits = CommitLog.objects.all()
@@ -130,7 +134,7 @@ def commits_stats(request):
 #return a list of {"repository__id", "repository__name",  "commit_count"}
 #optional GET params: author, project, author, month, year
 def commits_project(request):
-    if not request.is_ajax():
+    if not is_ajax(request):
         return HttpResponse(status=400)
 
     commits = CommitLog.objects.all()
