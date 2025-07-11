@@ -18,7 +18,7 @@
             <tbody>
                 {% for project in projects  %}
                     <tr>
-                        <td><a href="{%url home %}project/{{project.id}}/">{{project.name}}</a></td>
+                        <td><a href="{% url 'commits:project' project.id %}">{{project.name}}</a></td>
                         <td>{{project.desc}}</td>
                         <td>{{project.author_count}}</td>
                     <tr>
@@ -128,7 +128,7 @@
             dateFormat: 'MM yy',
             onChangeMonthYear: function(year, month, inst) {
                 //update summary graph
-                url = '{% url home %}ajax/graph/project/?year=' + year + '&month=' + month;
+                url = '{% url "commits:project_commits" %}?year=' + year + '&month=' + month;
                 $.get(url, function(data) {
                     //remove all existing
                     while (graph_main.series.length >0)
@@ -154,7 +154,7 @@
                 });
 
                 //update small graph
-                url = '{% url home %}ajax/graph/summary/?year=' + year + '&month=' + month;
+                url = '{% url "commits:overall_commits" %}?year=' + year + '&month=' + month;
                 $.get(url, function(data) {
                     newdata = '['; 
                     $.each(data, function(i, item) {
@@ -165,30 +165,30 @@
                 });
 
                 //update commit log
-                url =  '{% url home %}ajax/commits/detail/?year=' + year + '&month=' + month;
+                url =  '{% url "commits:commits_detail" %}?year=' + year + '&month=' + month;
                 $.get(url, function(data) {
                     $("#commit_table tr").remove();
                     $.each(data, function(i, row) {
                         rev_link = row.repository__sourceview +  row.revision
-                        $("#commit_table").append('<tr><td><a href="{% url home %}project/' + row.repository__id + '/">' + row.repository__name + '</a></td><td><a href="/person/' + row.author__id + '/">'  + row.author__display + '</a></td> <td>' + row.date + ' ' +  row.time + '</td><td><a target="_blank" href="' + rev_link +'">' + row.comment + '</a></td></tr>');
+                        $("#commit_table").append('<tr><td><a href="/project/' + row.repository__id + '/">' + row.repository__name + '</a></td><td><a href="/person/' + row.author__id + '/">'  + row.author__display + '</a></td> <td>' + row.date + ' ' +  row.time + '</td><td><a target="_blank" href="' + rev_link +'">' + row.comment + '</a></td></tr>');
                     });
                 })
 
                 //update monthly commits stats
-                url =  '{% url home %}ajax/commits/stats/?year=' + year + '&month=' + month;
+                url =  '{% url "commits:commits_stats" %}?year=' + year + '&month=' + month;
                 $.get(url, function(data) {
                     $("#monthly_commits tr").remove();
                     $.each(data, function(i, row) {
-                        $("#monthly_commits").append('<tr><td><a href="{% url home %}person/' + row.author__id + '/">' + row.author__display + '</a></td> <td>' + row.commit_count + '</td></tr>');
+                        $("#monthly_commits").append('<tr><td><a href="/person/' + row.author__id + '/">' + row.author__display + '</a></td> <td>' + row.commit_count + '</td></tr>');
                     });
                 });
 
                 //update monthly projects stats
-                url = '{% url home %}ajax/commits/project/?year=' + year + '&month=' + month;
+                url = '{% url "commits:commits_project" %}?year=' + year + '&month=' + month;
                 $.get(url, function(data) {
                     $("#monthly_projects tr").remove();
                     $.each(data, function(i, row) {
-                        $("#monthly_projects").append('<tr><td><a href="{% url home %}project/' + row.repository__id + '/">' + row.repository__name + '</a</td> <td>' + row.commit_count + '</td></tr>');
+                        $("#monthly_projects").append('<tr><td><a href="/project/' + row.repository__id + '/">' + row.repository__name + '</a></td> <td>' + row.commit_count + '</td></tr>');
                     });
                 });
 
